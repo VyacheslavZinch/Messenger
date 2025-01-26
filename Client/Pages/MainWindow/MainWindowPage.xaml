@@ -1,0 +1,20 @@
+﻿<Page x:Class="Client.Pages.MainWindow.MainWindowPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg" TileMode="Tile"/>
+        </Grid.Background>
+        <Grid Margin="280,0,280,0">
+            <Grid Margin="10,208,-10,207"/>
+            <Button x:Name="MainWindowRegistrationButton" Content="Registration" HorizontalAlignment="Center" Margin="0,227,0,0" VerticalAlignment="Top" Height="48" Width="150" FontFamily="Bahnschrift SemiBold" FontSize="18" Background="#FFCBCBCB" Click="MainWindowRegistrationButton_Click"/>
+            <Button x:Name="MainWindowLoginButton" Content="Login" HorizontalAlignment="Center" Margin="0,155,0,0" VerticalAlignment="Top" Height="48" Width="150" FontFamily="Bahnschrift SemiBold" FontSize="18" Background="#FFCBCBCB" Click="MainWindowLoginButton_Click"/>
+        </Grid>
+    </Grid>
+</Page>

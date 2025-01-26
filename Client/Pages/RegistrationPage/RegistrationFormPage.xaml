@@ -1,0 +1,33 @@
+﻿<Page x:Class="Client.Pages.RegistrationPage.RegistrationFormPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Client.Pages.RegistrationPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="RegistrationFormPage">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
+        </Grid.Background>
+        <Grid Margin="280,10,280,10">
+            <Grid Margin="0,70,0,110">
+                <Grid Margin="0,110,0,130"/>
+                <TextBox x:Name="RegistrationPageNameInput" HorizontalAlignment="Center" Margin="0,80,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="220" Height="25" Background="#FFAFE3CD" FontFamily="Bahnschrift SemiCondensed" TextChanged="RegistrationPageNameInput_TextChanged"/>
+                <TextBox x:Name="RegistrationPageNicknameInput" HorizontalAlignment="Center" Margin="0,120,0,0" TextWrapping="Wrap" Text="Nickname" VerticalAlignment="Top" Width="220" Height="25" FontFamily="Bahnschrift SemiCondensed" Background="#FFAFE3CD" TextChanged="RegistrationPageNicknameInput_TextChanged"/>
+                <Grid Margin="0,150,0,90"/>
+                <TextBox x:Name="RegistrationPageMailInput" HorizontalAlignment="Center" Margin="0,165,0,0" TextWrapping="Wrap" Text="Email" VerticalAlignment="Top" Width="220" Height="25" FontFamily="Bahnschrift SemiCondensed" Background="#FFAFE3CD" TextChanged="RegistrationPageMailInput_TextChanged"/>
+                <Grid Height="10" VerticalAlignment="Top" Margin="0,195,0,0"/>
+                <PasswordBox x:Name="RegistrationPagePasswordInput" HorizontalAlignment="Center" Margin="0,210,0,0" VerticalAlignment="Top" Width="220" Height="25" Background="#FFAFE3CD" Password="password"/>
+                <TextBlock HorizontalAlignment="Center" Margin="0,45,0,0" TextWrapping="Wrap" Text="Please input your registration data" VerticalAlignment="Top" Height="20" Width="300" Foreground="White" TextAlignment="Center" FontFamily="Bahnschrift SemiBold" FontSize="14" Focusable="True"/>
+            </Grid>
+            <Grid Margin="0,340,0,50">
+                <Button x:Name="RegistrationPageConfirmRegistration" Content="Confirm" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="105" Foreground="#FF0E0E0E" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="RegistrationPageConfirmRegistration_Click"/>
+                <Button x:Name="RegistrationPageCancelRegistration" Content="Cancel" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center" Height="40" Width="105" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="RegistrationPageCancelRegistration_Click"/>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Page>
