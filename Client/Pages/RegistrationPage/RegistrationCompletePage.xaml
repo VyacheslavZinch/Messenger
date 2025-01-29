@@ -9,6 +9,9 @@
       Title="RegistrationCompletePage">
 
     <Grid>
-        
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
+        </Grid.Background>
+
     </Grid>
 </Page>
