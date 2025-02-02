@@ -27,7 +27,7 @@ namespace Client.Pages.MainWindow
 
         private void MainWindowRegistrationButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new Pages.RegistrationPage.RegistrationFormPage());
         }
 
         private void MainWindowLoginButton_Click(object sender, RoutedEventArgs e)

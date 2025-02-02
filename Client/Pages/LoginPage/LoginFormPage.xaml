@@ -12,8 +12,8 @@
         <Grid.Background>
             <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
         </Grid.Background>
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="470" Width="780">
-            <Grid Margin="260,10,260,25">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="450" Width="800">
+            <Grid Margin="260,10,260,30">
                 <Grid Margin="0,120,0,150">
                     <Grid Margin="18,88,18,88">
                         <Grid.ColumnDefinitions>
@@ -21,16 +21,16 @@
                             <ColumnDefinition Width="27*"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <TextBox x:Name="LoginPageUsernameInput" HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" Text="Login/email" VerticalAlignment="Top" Width="204" Height="23" BorderThickness="1,1,1,1" FontFamily="Bahnschrift SemiBold" HorizontalContentAlignment="Center" TextInput="LoginPageUsernameInput_LoginInput" FontSize="14" SelectionTextBrush="{x:Null}" Background="#FFAFE3CD" TextChanged="LoginPageUsernameInput_TextChanged"/>
-                    <PasswordBox x:Name="LoginPagePasswordInput" HorizontalAlignment="Center" Margin="0,107,0,0" VerticalAlignment="Top" Width="204" Height="23" ToolTip="" TextInput="LoginPagePasswordInput_PasswordInput" Background="#FFAFE3CD" MaxLength="64" Password="password"/>
+                    <TextBox x:Name="LoginPageUsernameInput" HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" Text="Login/email" VerticalAlignment="Top" Width="204" Height="23" BorderThickness="1,1,1,1" FontFamily="Bahnschrift SemiBold" HorizontalContentAlignment="Center" FontSize="14" SelectionTextBrush="{x:Null}" Background="#FFAFE3CD" TextChanged="LoginPageUsernameInput_LoginInput"/>
+                    <PasswordBox x:Name="LoginPagePasswordInput" HorizontalAlignment="Center" Margin="0,107,0,0" VerticalAlignment="Top" Width="204" Height="23" ToolTip="" Background="#FFAFE3CD" MaxLength="64" Password="password" PasswordChanged="LoginPagePasswordInput_PasswordInput"/>
                 </Grid>
                 <Grid Margin="0,280,0,135"/>
-                <Grid Margin="0,300,0,85">
-                    <Button x:Name="LoginPageSignInButton" Content="Sign in" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="120" Click="LoginPageSignInButton_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB"/>
-                    <Button x:Name="LoginPageRestoreAccessButton" Content="Restore access" HorizontalAlignment="Left" Margin="140,0,0,0" VerticalAlignment="Center" Height="38" Width="120" Click="LoginPageRestoreAccessButton_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB"/>
+                <Grid Margin="0,300,0,70">
+                    <Button x:Name="LoginPageSignInButton" Content="Sign in" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="105" Click="LoginPageSignInButton_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Margin="35,0,0,0"/>
+                    <Button x:Name="LoginPageRestoreAccessButton" Content="Restore access" HorizontalAlignment="Left" Margin="145,0,0,0" VerticalAlignment="Center" Height="40" Width="105" Click="LoginPageRestoreAccessButton_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB"/>
                 </Grid>
-                <Grid Margin="0,365,0,25">
-                    <Button x:Name="LoginPageCancellButton" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="110" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="LoginPageCancellButton_Click"/>
+                <Grid Margin="0,345,0,20">
+                    <Button x:Name="LoginPageCancellButton" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="105" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="LoginPageCancellButton_Click"/>
                 </Grid>
             </Grid>
         </Grid>

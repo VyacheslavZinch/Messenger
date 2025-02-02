@@ -24,5 +24,10 @@ namespace Client.Pages.RestoreAccess
         {
             InitializeComponent();
         }
+
+        private void RestoreAccessFinishedButton_Button_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
+        }
     }
 }

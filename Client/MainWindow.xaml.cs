@@ -14,11 +14,17 @@ namespace Client
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    ///     
+    
+
     public partial class MainWindow : Window
     {
+        public static Frame mainFrame { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
+            mainFrame = MainFrame;
             MainFrame.Navigate(new Pages.MainWindow.MainWindowPage());
         }
     }

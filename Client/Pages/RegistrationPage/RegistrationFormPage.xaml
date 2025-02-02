@@ -12,8 +12,8 @@
         <Grid.Background>
             <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
         </Grid.Background>
-        <Grid Margin="280,10,280,10">
-            <Grid Margin="0,70,0,110">
+        <Grid Margin="280,20,280,30">
+            <Grid Margin="0,70,0,90">
                 <Grid Margin="0,110,0,130"/>
                 <TextBox x:Name="RegistrationPageNameInput" HorizontalAlignment="Center" Margin="0,80,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="220" Height="25" Background="#FFAFE3CD" FontFamily="Bahnschrift SemiCondensed" TextChanged="RegistrationPageNameInput_TextChanged"/>
                 <TextBox x:Name="RegistrationPageNicknameInput" HorizontalAlignment="Center" Margin="0,120,0,0" TextWrapping="Wrap" Text="Nickname" VerticalAlignment="Top" Width="220" Height="25" FontFamily="Bahnschrift SemiCondensed" Background="#FFAFE3CD" TextChanged="RegistrationPageNicknameInput_TextChanged"/>
@@ -23,9 +23,9 @@
                 <PasswordBox x:Name="RegistrationPagePasswordInput" HorizontalAlignment="Center" Margin="0,210,0,0" VerticalAlignment="Top" Width="220" Height="25" Background="#FFAFE3CD" Password="password"/>
                 <TextBlock HorizontalAlignment="Center" Margin="0,45,0,0" TextWrapping="Wrap" Text="Please input your registration data" VerticalAlignment="Top" Height="20" Width="300" Foreground="White" TextAlignment="Center" FontFamily="Bahnschrift SemiBold" FontSize="14" Focusable="True"/>
             </Grid>
-            <Grid Margin="0,340,0,50">
+            <Grid Margin="10,335,10,30">
                 <Button x:Name="RegistrationPageConfirmRegistration" Content="Confirm" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="105" Foreground="#FF0E0E0E" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="RegistrationPageConfirmRegistration_Click"/>
-                <Button x:Name="RegistrationPageCancelRegistration" Content="Cancel" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center" Height="40" Width="105" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="RegistrationPageCancelRegistration_Click"/>
+                <Button x:Name="RegistrationPageCancelRegistration" Content="Cancel" Margin="110,0,5,0" VerticalAlignment="Center" Height="40" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB" Click="RegistrationPageCancelRegistration_Click" Width="105"/>
             </Grid>
         </Grid>
 

@@ -20,9 +20,25 @@ namespace Client.Pages.RestoreAccess
     /// </summary>
     public partial class RestoreAccesFormPage : Page
     {
+        private string usersEmail { get; set; } = String.Empty;
         public RestoreAccesFormPage()
         {
             InitializeComponent();
+        }
+
+        private void RestoreAccess_MailInput(object sender, TextCompositionEventArgs e)
+        {
+            usersEmail = e.Text;
+        }
+
+        private void RestoreAccessCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
+        }
+
+        private void RestoreAccessConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Pages.RestoreAccess.RestoreAccessCompletePage());
         }
     }
 }

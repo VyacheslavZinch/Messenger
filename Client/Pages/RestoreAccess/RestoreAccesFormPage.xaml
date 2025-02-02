@@ -9,6 +9,21 @@
       Title="RestoreAccesFormPage">
 
     <Grid>
-        
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
+        </Grid.Background>
+        <Grid Margin="280,10,280,10">
+            <Grid Margin="0,340,0,50"/>
+            <Grid Margin="0,85,0,85">
+                <Grid Margin="10,150,10,85"/>
+                <Grid Margin="10,180,10,35">
+                    <Button x:Name="RestoreAccessConfirmButton" Content="Confirm" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="105" FontSize="14" FontFamily="Bahnschrift SemiBold" Click="RestoreAccessConfirmButton_Click"/>
+                    <Button x:Name="RestoreAccessCancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="115,0,0,0" VerticalAlignment="Center" Height="40" Width="105" FontFamily="Bahnschrift SemiBold" FontSize="14" Click="RestoreAccessCancelButton_Click"/>
+                </Grid>
+                <TextBox x:Name="RestoreAccessEmailField" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Email" VerticalAlignment="Center" Width="204" Height="24" Background="#FFAFE3CD" FontFamily="Bahnschrift SemiBold" FontSize="14" TextAlignment="Center" TextInput="RestoreAccess_MailInput"/>
+                <TextBlock HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" Text="Please input your email" VerticalAlignment="Top" Height="20" Width="300" Foreground="White" TextAlignment="Center" FontFamily="Bahnschrift SemiBold" FontSize="14" Focusable="True"/>
+            </Grid>
+        </Grid>
+
     </Grid>
 </Page>

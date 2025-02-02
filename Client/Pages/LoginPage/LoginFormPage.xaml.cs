@@ -15,43 +15,46 @@ using System.Windows.Shapes;
 
 namespace Client.Pages.LoginPage
 {
+
     /// <summary>
     /// Interaction logic for LoginFormPage.xaml
     /// </summary>
+    /// 
     public partial class LoginFormPage : Page
     {
+        private string Login{ get; set; } = string.Empty;
+        private string Password{ get; set; } = String.Empty;
         public LoginFormPage()
         {
             InitializeComponent();
         }
-        private void LoginPagePasswordInput_PasswordInput(object sender, TextCompositionEventArgs e)
-        {
-
-        }
-
-        private void LoginPageUsernameInput_LoginInput(object sender, TextCompositionEventArgs e)
-        {
-
-        }
 
         private void LoginPageSignInButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new Pages.LoginPage.LoginFormPage());
+            MessageBox.Show($"{Login} {Password}");
+            //NavigationService?.Navigate(new Pages.RegistrationPage.RegistrationCompletePage());
         }
 
         private void LoginPageRestoreAccessButton_Click(object sender, RoutedEventArgs e)
         {
+            NavigationService.Navigate(new Pages.RestoreAccess.RestoreAccesFormPage());
 
         }
 
         private void LoginPageCancellButton_Click(object sender, RoutedEventArgs e)
         {
+            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
 
         }
 
-        private void LoginPageUsernameInput_TextChanged(object sender, TextChangedEventArgs e)
+        private void LoginPageUsernameInput_LoginInput(object sender, TextChangedEventArgs e)
         {
+            Login = LoginPageUsernameInput.Text;
+        }
 
+        private void LoginPagePasswordInput_PasswordInput(object sender, RoutedEventArgs e)
+        {
+            Password = LoginPagePasswordInput.Password;
         }
     }
 }
