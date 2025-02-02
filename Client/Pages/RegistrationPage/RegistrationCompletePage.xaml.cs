@@ -24,5 +24,10 @@ namespace Client.Pages.RegistrationPage
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
+        }
     }
 }

@@ -12,6 +12,12 @@
         <Grid.Background>
             <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
         </Grid.Background>
+        <Grid Margin="250,20,250,20">
+            <Grid Margin="0,235,0,135">
+                <Button x:Name="RestoreAccessFinishedButton" Content="OK" HorizontalAlignment="Center" VerticalAlignment="Center" Width="104" Height="40" Click="RestoreAccessFinishedButton_Button_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB"/>
+            </Grid>
+            <TextBlock HorizontalAlignment="Center" Margin="0,183,0,0" TextWrapping="Wrap" Text="The new password is sent to your mail." VerticalAlignment="Top" Height="32" Width="300" Foreground="White" FontFamily="Bahnschrift SemiBold" FontSize="16" Focusable="True" TextAlignment="Center"/>
+        </Grid>
 
     </Grid>
 </Page>

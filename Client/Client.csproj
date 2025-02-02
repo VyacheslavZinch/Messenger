@@ -18,4 +18,10 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Login\" />
+    <Folder Include="Data\RestoreAccess\" />
+    <Folder Include="Data\Registration\" />
+  </ItemGroup>
+
 </Project>

@@ -26,12 +26,14 @@ namespace Client.Pages.RegistrationPage
         }
         private void RegistrationPageConfirmRegistration_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
+            NavigationService.Navigate(new Pages.RegistrationPage.RegistrationCompletePage());
+
         }
 
         private void RegistrationPageCancelRegistration_Click(object sender, RoutedEventArgs e)
         {
-            
+            NavigationService.Navigate(new Pages.MainWindow.MainWindowPage());
+
         }
 
         private void RegistrationPageNameInput_TextChanged(object sender, TextChangedEventArgs e)

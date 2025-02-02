@@ -32,7 +32,7 @@ namespace Client.Pages.LoginPage
         private void LoginPageSignInButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show($"{Login} {Password}");
-            NavigationService?.Navigate(new Pages.RegistrationPage.RegistrationCompletePage());
+            //NavigationService?.Navigate(new Pages.RegistrationPage.RegistrationCompletePage());
         }
 
         private void LoginPageRestoreAccessButton_Click(object sender, RoutedEventArgs e)

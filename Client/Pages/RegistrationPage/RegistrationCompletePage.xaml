@@ -9,9 +9,19 @@
       Title="RegistrationCompletePage">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="29*"/>
+            <ColumnDefinition Width="51*"/>
+        </Grid.ColumnDefinitions>
         <Grid.Background>
             <ImageBrush ImageSource="/Resources/Backgrounds/Main.jpg"/>
         </Grid.Background>
+        <Grid Margin="250,20,250,20" Grid.ColumnSpan="2">
+            <Grid Margin="0,235,0,135">
+                <Button x:Name="RegistrationFinishedButton" Content="OK" HorizontalAlignment="Center" VerticalAlignment="Center" Width="104" Height="40" Click="Button_Click" FontFamily="Bahnschrift SemiBold" FontSize="14" Background="#FFCBCBCB"/>
+            </Grid>
+            <TextBlock HorizontalAlignment="Center" Margin="0,183,0,0" TextWrapping="Wrap" Text="Registration is successfully completed" VerticalAlignment="Top" Height="32" Width="300" Foreground="White" FontFamily="Bahnschrift SemiBold" FontSize="16" Focusable="True" TextAlignment="Center"/>
+        </Grid>
 
     </Grid>
 </Page>
