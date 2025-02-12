@@ -2,22 +2,22 @@
 using RestSharp.Authenticators;
 using APIInterfaces;
 using DotNetEnv;
+
 namespace MailService
 {
 #nullable disable
     public class Mail
     {
-        private string usersName { get; set; }
-        private string toMail { get; set; }
-        private RestClient client { get; set; } 
-        private RestRequest request { get; set; }
-        private RestResponse response { get; set; }
-        private MailSenderResult sendMessageResult = new MailSenderResult()
-        {
-            result = false,
-            message = null,
-            message_date_time = null
-        };
+        private string UserName { get; set; }
+        private string ToMail { get; set; }
+        private RestClient Client { get; set; } 
+        private RestRequest Request { get; set; }
+        private RestResponse Response { get; set; }
+        private MailSenderResult SendMessageResult;
+        private const string RestoreAccessMessage = "Access to you account successfully restored.";
+        private const string ConfirmRegistrationMessage = "Thanks for registration!";
+
+
 
         #region secrets
 
@@ -51,91 +51,96 @@ namespace MailService
         {
             Env.Load();
 
-            this.toMail = toMail;
-            this.usersName = usersName;
+            this.ToMail = toMail;
+            this.UserName = usersName;
 
-            request = new RestRequest($"{mailDomain.Value}/messages", Method.Post);
-            client = new RestClient(
+            Request = new RestRequest($"{mailDomain.Value}/messages", Method.Post);
+            Client = new RestClient(
                 new RestClientOptions(mailURL.Value)
                 {
                     Authenticator = new HttpBasicAuthenticator("api", apiKey.Value)
                 }
             );
-            
-            request.AddParameter("from", $"{fromMail.Value}");
-            request.AddParameter("to", $"{toMail}");
+            SendMessageResult = new MailSenderResult()
+            {
+                Result = false,
+                Message = null,
+                MessageDateTime = null
+            };
+
+            Request.AddParameter("from", $"{fromMail.Value}");
+            Request.AddParameter("to", $"{toMail}");
         }
 
         public async Task<string> SendNewPassword(string newPassword)
         {
-            var subject = "Access to you account successfully restored.";
-            var message = $"Hello {usersName}! This is your new password - {newPassword}";
+            var message = $"Hello {UserName}! This is your new password - {newPassword}";
 
-            request.AddParameter("subject", $"{subject}");
-            request.AddParameter("text", $"{message}");
+            Request.AddParameter("subject", $"{RestoreAccessMessage}");
+            Request.AddParameter("text", $"{message}");
 
             try
             {
-  
-                sendMessageResult.message = message;
-                sendMessageResult.message_date_time = DateTime.Now.ToString();
-                response = await Task.Run(() => client.Execute(request));
+
+                SendMessageResult.Message = message;
+                SendMessageResult.MessageDateTime = DateTime.Now.ToString();
+                Response = await Task.Run(() => Client.Execute(Request));
 #if DEBUG
-                Console.WriteLine(response.Content);
+                Console.WriteLine(Response.Content);
 #endif
-                if (response.IsSuccessful)
+                if (Response.IsSuccessful)
                 {
-                    sendMessageResult.result = true;
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
+                    SendMessageResult.Result = true;
+                    return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
 
                 }
                 else
                 {
                     //TODO
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));    
+                    return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));    
                 }
 
             }
             catch (Exception err)
             {
                 //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
+                return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
             }
 
         }
         public async Task<string> SendConfirmMail()
         {
-            var subject = "Thanks for registration!";
-            var message = $"Hello, {usersName}! Thanks for registration in our service";
 
-            request.AddParameter("subject", $"{subject}");
-            request.AddParameter("text", $"{message}");
+            var message = $"Hello, {UserName}! Thanks for registration in our service";
+
+            Request.AddParameter("subject", $"{ConfirmRegistrationMessage}");
+            Request.AddParameter("text", $"{message}");
 
             try
             {
-                sendMessageResult.message = message;
-                sendMessageResult.message_date_time = DateTime.Now.ToString();
-                response = await Task.Run(() =>client.Execute(request));
+                SendMessageResult.Message = message;
+                SendMessageResult.MessageDateTime = DateTime.Now.ToString();
+                Response = await Task.Run(() =>Client.Execute(Request));
 #if DEBUG
-                Console.WriteLine(response.Content);
+                Console.WriteLine(Response.Content);
 #endif
-                if (response.IsSuccessful)
+                if (Response.IsSuccessful)
                 {
-                    sendMessageResult.result = true;
-                    return JsonDataHandler.JsonSerialize(sendMessageResult);
+                    SendMessageResult.Result = true;
+                    return JsonDataHandler.JsonSerialize(SendMessageResult);
 
                 }
                 else
                 {
                     //TODO
-                    return JsonDataHandler.JsonSerialize(sendMessageResult);
+                    return JsonDataHandler.JsonSerialize(SendMessageResult);
                 }
 
             }
             catch (Exception err)
             {
                 //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
+                return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
             }
         }
     }
