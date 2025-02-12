@@ -8,11 +8,11 @@ namespace MailService
 #nullable disable
     public class Mail
     {
-        private string UserName { get; set; }
-        private string ToMail { get; set; }
-        private RestClient Client { get; set; } 
-        private RestRequest Request { get; set; }
-        private RestResponse Response { get; set; }
+        public string UserName { get; set; }
+        public string ToMail { get; set; }
+        public RestClient Client { get; set; }
+        public RestRequest Request { get; set; }
+        public RestResponse Response { get; set; }
         private MailSenderResult SendMessageResult;
         private const string RestoreAccessMessage = "Access to you account successfully restored.";
         private const string ConfirmRegistrationMessage = "Thanks for registration!";
