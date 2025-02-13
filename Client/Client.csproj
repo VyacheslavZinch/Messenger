@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove="Data\**" />
+    <Page Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\Backgrounds\Main.jpg" />
   </ItemGroup>
 
@@ -16,12 +23,6 @@
     <Resource Include="Resources\Backgrounds\Main.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Login\" />
-    <Folder Include="Data\RestoreAccess\" />
-    <Folder Include="Data\Registration\" />
   </ItemGroup>
 
 </Project>

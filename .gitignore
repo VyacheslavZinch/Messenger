@@ -5,3 +5,10 @@
 /Client/bin/Debug/net8.0-windows
 /.vs
 /Client/obj
+/APIInterfaces/obj
+/APIInterfaces/bin/Debug/net8.0
+/DataProcessingAPI/obj
+/MailService/bin
+/MailService/obj
+/MailService/.env
+/MessagesHub/obj
