@@ -13,7 +13,7 @@ namespace MailService
         public RestClient Client { get; set; }
         public RestRequest Request { get; set; }
         public RestResponse Response { get; set; }
-        private MailSenderResult SendMessageResult;
+        private MailSenderResult sendMessageResult;
         private const string RestoreAccessMessage = "Access to you account successfully restored.";
         private const string ConfirmRegistrationMessage = "Thanks for registration!";
 
@@ -61,7 +61,7 @@ namespace MailService
                     Authenticator = new HttpBasicAuthenticator("api", apiKey.Value)
                 }
             );
-            SendMessageResult = new MailSenderResult()
+            sendMessageResult = new MailSenderResult()
             {
                 Result = false,
                 Message = null,
@@ -82,29 +82,29 @@ namespace MailService
             try
             {
 
-                SendMessageResult.Message = message;
-                SendMessageResult.MessageDateTime = DateTime.Now.ToString();
+                sendMessageResult.Message = message;
+                sendMessageResult.MessageDateTime = DateTime.Now.ToString();
                 Response = await Task.Run(() => Client.Execute(Request));
 #if DEBUG
                 Console.WriteLine(Response.Content);
 #endif
                 if (Response.IsSuccessful)
                 {
-                    SendMessageResult.Result = true;
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
+                    sendMessageResult.Result = true;
+                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
 
                 }
                 else
                 {
                     //TODO
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));    
+                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));    
                 }
 
             }
             catch (Exception err)
             {
                 //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
+                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
             }
 
         }
@@ -118,29 +118,29 @@ namespace MailService
 
             try
             {
-                SendMessageResult.Message = message;
-                SendMessageResult.MessageDateTime = DateTime.Now.ToString();
+                sendMessageResult.Message = message;
+                sendMessageResult.MessageDateTime = DateTime.Now.ToString();
                 Response = await Task.Run(() =>Client.Execute(Request));
 #if DEBUG
                 Console.WriteLine(Response.Content);
 #endif
                 if (Response.IsSuccessful)
                 {
-                    SendMessageResult.Result = true;
-                    return JsonDataHandler.JsonSerialize(SendMessageResult);
+                    sendMessageResult.Result = true;
+                    return JsonDataHandler.JsonSerialize(sendMessageResult);
 
                 }
                 else
                 {
                     //TODO
-                    return JsonDataHandler.JsonSerialize(SendMessageResult);
+                    return JsonDataHandler.JsonSerialize(sendMessageResult);
                 }
 
             }
             catch (Exception err)
             {
                 //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(SendMessageResult));
+                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
             }
         }
     }
