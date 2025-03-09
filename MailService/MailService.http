@@ -1,11 +1,11 @@
 @MailService_HostAddress = http://localhost:5252
 
-GET {{MailService_HostAddress}}/todos/
+POST {{MailService_HostAddress}}/confirmregistration/
 Accept: application/json
 
 ###
 
-GET {{MailService_HostAddress}}/todos/1
+GET {{MailService_HostAddress}}/restoreaccess/
 Accept: application/json
 
 ###

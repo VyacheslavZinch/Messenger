@@ -10,3 +10,5 @@
 /MailService/bin
 /MailService/obj
 /MailService/.env
+/APIInterfaces/bin/Debug/net9.0
+/APIInterfaces/Properties/PublishProfiles

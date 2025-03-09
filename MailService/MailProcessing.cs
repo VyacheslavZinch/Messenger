@@ -2,21 +2,27 @@
 using RestSharp.Authenticators;
 using APIInterfaces;
 using DotNetEnv;
+using Newtonsoft.Json;
 
 namespace MailService
 {
-#nullable disable
-    public class Mail
+    public enum MailTypes
     {
-        public string UserName { get; set; }
-        public string ToMail { get; set; }
+        Registration,
+        RestoreAccess      
+    }
+
+    public class Mail<T> where T: class
+    {
         public RestClient Client { get; set; }
         public RestRequest Request { get; set; }
         public RestResponse Response { get; set; }
         private MailSenderResult sendMessageResult;
+        public string UserName { get; set; }
+        public string ToMail { get; set; }
+        public string NewPassword { get; set; }
         private const string RestoreAccessMessage = "Access to you account successfully restored.";
         private const string ConfirmRegistrationMessage = "Thanks for registration!";
-
 
 
         #region secrets
@@ -47,68 +53,86 @@ namespace MailService
 
         #endregion
 
-        public Mail(string toMail, string usersName)
+        public Mail(T requestBody)
         {
             Env.Load();
-
-            this.ToMail = toMail;
-            this.UserName = usersName;
+            
+            if (typeof(T).Equals(typeof(IncomingRequestRegistration)))
+            {
+                this.UserName = (requestBody as IncomingRequestRegistration).Name;
+                this.ToMail = (requestBody as IncomingRequestRegistration).Email;
+            }
+            else if (typeof(T).Equals(typeof(IncomingRequestRestoreAccess)))
+            {
+                this.UserName = (requestBody as IncomingRequestRestoreAccess).Name;
+                this.ToMail = (requestBody as IncomingRequestRestoreAccess).Email;
+                this.NewPassword = (requestBody as IncomingRequestRestoreAccess).NewPassword;
+            }
+            
 
             Request = new RestRequest($"{mailDomain.Value}/messages", Method.Post);
+
             Client = new RestClient(
                 new RestClientOptions(mailURL.Value)
                 {
                     Authenticator = new HttpBasicAuthenticator("api", apiKey.Value)
                 }
             );
+
             sendMessageResult = new MailSenderResult()
             {
-                Result = false,
+                StatusCode = System.Net.HttpStatusCode.OK,
                 Message = null,
-                MessageDateTime = null
             };
 
             Request.AddParameter("from", $"{fromMail.Value}");
-            Request.AddParameter("to", $"{toMail}");
+            Request.AddParameter("to", $"{ToMail}");
         }
 
-        public async Task<string> SendNewPassword(string newPassword)
+        public async Task<MailSenderResult> SendNewPassword()
         {
-            var message = $"Hello {UserName}! This is your new password - {newPassword}";
+            var message = $"Hello {UserName}! This is your new password - {NewPassword}";
 
             Request.AddParameter("subject", $"{RestoreAccessMessage}");
             Request.AddParameter("text", $"{message}");
 
             try
             {
-
+                sendMessageResult.MailType = MailType.RestoreAccess.ToString().ToLower();
                 sendMessageResult.Message = message;
-                sendMessageResult.MessageDateTime = DateTime.Now.ToString();
+                sendMessageResult.MessageDateTime = DateTime.Now;
                 Response = await Task.Run(() => Client.Execute(Request));
 #if DEBUG
                 Console.WriteLine(Response.Content);
 #endif
                 if (Response.IsSuccessful)
                 {
-                    sendMessageResult.Result = true;
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
-
+                    sendMessageResult.StatusCode = System.Net.HttpStatusCode.OK;
+                    return await Task.Run(() => sendMessageResult);
                 }
                 else
                 {
-                    //TODO
-                    return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));    
+                    sendMessageResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    sendMessageResult.MessageServiceAPIError = new MessageServiceAPIError
+                    {
+                        Message = Response.ErrorMessage,
+                    };
+                    return await Task.Run(() => sendMessageResult);
                 }
 
             }
             catch (Exception err)
             {
-                //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
+                sendMessageResult.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                sendMessageResult.MessageServiceAPIError = new MessageServiceAPIError
+                {
+                    Message = err.Message,
+                };
+                return await Task.Run(() => sendMessageResult);
             }
 
         }
-        public async Task<string> SendConfirmMail()
+        public async Task<MailSenderResult> SendConfirmMail()
         {
 
             var message = $"Hello, {UserName}! Thanks for registration in our service";
@@ -118,30 +142,50 @@ namespace MailService
 
             try
             {
+                sendMessageResult.MailType = MailType.Registration.ToString().ToLower();
                 sendMessageResult.Message = message;
-                sendMessageResult.MessageDateTime = DateTime.Now.ToString();
-                Response = await Task.Run(() =>Client.Execute(Request));
+                sendMessageResult.MessageDateTime = DateTime.Now;
+                Response = await Task.Run(() => Client.Execute(Request));
 #if DEBUG
                 Console.WriteLine(Response.Content);
 #endif
                 if (Response.IsSuccessful)
                 {
-                    sendMessageResult.Result = true;
-                    return JsonDataHandler.JsonSerialize(sendMessageResult);
+                    sendMessageResult.StatusCode = System.Net.HttpStatusCode.OK;
+                    return sendMessageResult;
 
                 }
                 else
                 {
-                    //TODO
-                    return JsonDataHandler.JsonSerialize(sendMessageResult);
+                    sendMessageResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    sendMessageResult.MessageServiceAPIError = new MessageServiceAPIError
+                    {
+                        Message = Response.ErrorMessage,
+                    };
+                    return sendMessageResult;
                 }
 
             }
             catch (Exception err)
             {
-                //TODO
-                return await Task.Run(() => JsonDataHandler.JsonSerialize(sendMessageResult));
+                sendMessageResult.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                sendMessageResult.MessageServiceAPIError = new MessageServiceAPIError
+                {
+                    Message = err.Message,
+                };
+                return await Task.Run(() => sendMessageResult);
             }
+        }
+
+        public static async Task<T> getRequestBody<T>(HttpContext context)
+            where T: class
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            string requestBodyText = await reader.ReadToEndAsync();
+            T requestBody = JsonConvert.DeserializeObject<T>(requestBodyText);
+            
+            return requestBody;
         }
     }
 }
+

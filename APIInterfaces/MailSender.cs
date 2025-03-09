@@ -1,35 +1,57 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace APIInterfaces
 {
-    public struct MailSenderResult
+    public record MailSenderResult
     {
-        [JsonPropertyName("result")]
-        public bool Result { get; set; }
+        [JsonPropertyName("statuscode")]
+        public HttpStatusCode StatusCode { get; set; }
 
         [JsonPropertyName("message")]
         public string Message { get; set; }
+
+        [JsonPropertyName("type")]
+        public string MailType { get; set; }
 
         [JsonPropertyName("datetime")]
-        public string MessageDateTime { get; set; }
+        public DateTime MessageDateTime { get; set; }
+
+        [JsonPropertyName("error")]
+        public MessageServiceAPIError MessageServiceAPIError { get; set; }
 
     }
 
-    public struct MessageServiceAPIError
+    public record MessageServiceAPIError
     {
         [JsonPropertyName("message")]
-        public string Message { get; set; }
+        public string Message { get; init; }
     }
 
-    public struct IncomingRequest
+    public record IncomingRequestRegistration
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
         [JsonPropertyName("email")]
         public string Email { get; set; }
+
     }
+    public record IncomingRequestRestoreAccess
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
 
+        [JsonPropertyName("newpassword")]
+        public string NewPassword { get; set; }
 
+    }
+    public enum MailType
+    {
+        Registration,
+        RestoreAccess
+    }
 }
