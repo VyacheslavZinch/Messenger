@@ -12,3 +12,7 @@
 /MailService/.env
 /APIInterfaces/bin/Debug/net9.0
 /APIInterfaces/Properties/PublishProfiles
+/Client/bin/Debug/net9.0-windows8.0
+/EntityDb/bin/Debug/net8.0
+/EntityDb/obj
+/CreateDatabaseQuery.sql
