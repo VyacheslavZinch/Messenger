@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailService", "MailService\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIInterfaces", "APIInterfaces\APIInterfaces.csproj", "{59D92222-BAA5-457D-BBDB-7D5ABD7D11B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDb", "EntityDb\EntityDb.csproj", "{9E16A153-BDFC-471E-884F-069CF41486C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +29,15 @@ Global
 		{59D92222-BAA5-457D-BBDB-7D5ABD7D11B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59D92222-BAA5-457D-BBDB-7D5ABD7D11B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59D92222-BAA5-457D-BBDB-7D5ABD7D11B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E16A153-BDFC-471E-884F-069CF41486C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E16A153-BDFC-471E-884F-069CF41486C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E16A153-BDFC-471E-884F-069CF41486C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E16A153-BDFC-471E-884F-069CF41486C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F76C271B-1BB2-4A5F-83E2-9B532C3B354D}
 	EndGlobalSection
 EndGlobal

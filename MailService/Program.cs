@@ -1,5 +1,4 @@
 using APIInterfaces;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace MailService
@@ -12,7 +11,9 @@ namespace MailService
 
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
-                options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+                options.SerializerOptions
+                    .TypeInfoResolverChain
+                    .Insert(0, AppJsonSerializerContext.Default);
             });
 
             var app = builder.Build();
@@ -27,15 +28,16 @@ namespace MailService
             mailService.MapPost("/confirmregistration", async (HttpContext context) =>
             {
                 var requestBody = await Mail<IncomingRequestRegistration>.getRequestBody<IncomingRequestRegistration>(context);
-                var outcomingRequest = await new Mail<IncomingRequestRegistration>(requestBody).SendConfirmMail();
-                return Results.Ok(outcomingRequest);
+                var outcomingResponse = await new Mail<IncomingRequestRegistration>(requestBody).SendConfirmMail();
+
+                return Results.Ok(outcomingResponse);
             });
 
             mailService.MapPost("/restoreaccess", async (HttpContext context) =>
             {
-                var requestBody = await Mail<IncomingRequestRegistration>.getRequestBody<IncomingRequestRestoreAccess>(context);
-                var outcomingRequest = await new Mail<IncomingRequestRestoreAccess>(requestBody).SendNewPassword();
-                return Results.Ok(outcomingRequest);
+                var requestBody = await Mail<IncomingRequestRestoreAccess>.getRequestBody<IncomingRequestRestoreAccess>(context);
+                var outcomingResponse = await new Mail<IncomingRequestRestoreAccess>(requestBody).SendNewPassword();
+                return Results.Ok(outcomingResponse);
 
             });
 
