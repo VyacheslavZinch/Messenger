@@ -1,3 +1,4 @@
+using APIInterfaces;
 using System.Text.Json.Serialization;
 
 namespace MailService
@@ -10,41 +11,42 @@ namespace MailService
 
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
-                options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+                options.SerializerOptions
+                    .TypeInfoResolverChain
+                    .Insert(0, AppJsonSerializerContext.Default);
             });
 
             var app = builder.Build();
-#if DEBUG
-            var mail = new Mail("slavv.zinch@gmail.com", "vaclav228");
-            var res = await mail.SendConfirmMail();
-            Console.WriteLine($"{res}");
-#endif
 
+            var mailService = app.MapGroup("/");
 
+            mailService.MapGet("/", () =>
+            {
+                return Results.Ok("Hello!");
+            });
 
-            var sampleTodos = new Todo[] {
-                new(1, "Walk the dog"),
-                new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
-                new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-                new(4, "Clean the bathroom"),
-                new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
-            };
+            mailService.MapPost("/confirmregistration", async (HttpContext context) =>
+            {
+                var requestBody = await Mail<IncomingRequestRegistration>.getRequestBody<IncomingRequestRegistration>(context);
+                var outcomingResponse = await new Mail<IncomingRequestRegistration>(requestBody).SendConfirmMail();
 
+                return Results.Ok(outcomingResponse);
+            });
 
-            var todosApi = app.MapGroup("/todos");
-            todosApi.MapGet("/", () => sampleTodos);
-            todosApi.MapGet("/{id}", (int id) =>
-                sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-                    ? Results.Ok(todo)
-                    : Results.NotFound());
+            mailService.MapPost("/restoreaccess", async (HttpContext context) =>
+            {
+                var requestBody = await Mail<IncomingRequestRestoreAccess>.getRequestBody<IncomingRequestRestoreAccess>(context);
+                var outcomingResponse = await new Mail<IncomingRequestRestoreAccess>(requestBody).SendNewPassword();
+                return Results.Ok(outcomingResponse);
+
+            });
 
             app.Run();
         }
     }
 
-    public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
 
-    [JsonSerializable(typeof(Todo[]))]
+    [JsonSerializable(typeof(MailSenderResult))]
     internal partial class AppJsonSerializerContext : JsonSerializerContext
     {
 

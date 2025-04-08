@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
@@ -17,8 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="APIInterfaces">
-      <HintPath>..\APIInterfaces\obj\Debug\net8.0\APIInterfaces.dll</HintPath>
+    <ProjectReference Include="..\APIInterfaces\APIInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Database">
+      <HintPath>..\Database\bin\Debug\net8.0\Database.dll</HintPath>
     </Reference>
   </ItemGroup>
 
