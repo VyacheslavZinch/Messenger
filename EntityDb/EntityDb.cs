@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Entities;
 
-namespace EntityDb
+namespace MessengerDb
 {
     public class EntityDb : DbContext
     {
@@ -17,7 +18,7 @@ namespace EntityDb
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-5K8HV6J\SQLEXPRESS;Database=Messenger;Trusted_Connection=True;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer(@"Server=localhost;Database=Messenger;User Id=admin;Password=Password12345;TrustServerCertificate=true");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
