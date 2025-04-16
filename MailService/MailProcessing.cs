@@ -1,8 +1,10 @@
-﻿using RestSharp;
-using RestSharp.Authenticators;
-using APIInterfaces;
+﻿using APIInterfaces;
 using DotNetEnv;
-using Newtonsoft.Json;
+using RestSharp;
+using RestSharp.Authenticators;
+//using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace MailService
 {
@@ -23,6 +25,7 @@ namespace MailService
         public string NewPassword { get; set; }
         private const string RestoreAccessMessage = "Access to you account successfully restored.";
         private const string ConfirmRegistrationMessage = "Thanks for registration!";
+
 
 
         #region secrets
@@ -91,7 +94,10 @@ namespace MailService
 
         public async Task<MailSenderResult> SendNewPassword()
         {
-            var message = $"Hello {UserName}! This is your new password - {NewPassword}";
+            var message = $"Hello {UserName}! This is your new password\n{NewPassword}";
+#if DEBUG
+            Console.WriteLine(message);
+#endif
 
             Request.AddParameter("subject", $"{RestoreAccessMessage}");
             Request.AddParameter("text", $"{message}");
@@ -182,8 +188,12 @@ namespace MailService
         {
             using var reader = new StreamReader(context.Request.Body);
             string requestBodyText = await reader.ReadToEndAsync();
-            T requestBody = JsonConvert.DeserializeObject<T>(requestBodyText);
-            
+            var options = new JsonSerializerOptions
+            {
+                TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+            };
+            T requestBody = JsonSerializer.Deserialize<T>(requestBodyText, options);
+
             return requestBody;
         }
     }

@@ -18,7 +18,7 @@ namespace MessengerDb
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost;Database=Messenger;User Id=admin;Password=Password12345;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer(@"Server=172.24.8.14;Database=Messenger;User Id=vaclav;Password=Password12345;TrustServerCertificate=true");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -96,7 +96,7 @@ namespace MessengerDb
             {
                 entity.ToTable("UserPasswordSalt");
                 entity.HasKey(e => e.UserId);
-                entity.Property(e => e.Salt).HasMaxLength(30).IsRequired();
+                entity.Property(e => e.Salt).HasMaxLength(100).IsRequired();
 
                 entity.HasOne(e => e.User)
                     .WithOne(e => e.PasswordSalt)

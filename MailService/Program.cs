@@ -29,7 +29,6 @@ namespace MailService
             {
                 var requestBody = await Mail<IncomingRequestRegistration>.getRequestBody<IncomingRequestRegistration>(context);
                 var outcomingResponse = await new Mail<IncomingRequestRegistration>(requestBody).SendConfirmMail();
-
                 return Results.Ok(outcomingResponse);
             });
 
@@ -51,4 +50,5 @@ namespace MailService
     {
 
     }
+    
 }

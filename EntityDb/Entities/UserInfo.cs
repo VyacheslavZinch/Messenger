@@ -7,7 +7,7 @@ namespace Entities
         public string? UserNickname { get; set; }
         public string UserEmail { get; set; }
         public string? UserPhoneNumber { get; set; }
-        public DateTime UserRegistrationDate { get; set; }
+        public DateOnly UserRegistrationDate { get; set; }
 
         public ICollection<UserChats> Chats { get; set; }
         public UserPassword Password { get; set; }
