@@ -17,12 +17,7 @@ namespace DataProcessing.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
-                var salt = Password.GenerateSalt();
-                var saltBase64 = Password.SaltBase64(Password.GenerateSalt());
-
                 string newPassword = Password.NewPasswordGenerator();
-                var hashPasswordBase64 = Password.HashPasswordBase64(newPassword, salt);
-
                 var user = Database.DbGetUser(data.Mail);
 
                 var mailServiceResponse = await Actions.RestoreAccess.RestoreAccessToAccount(
@@ -53,7 +48,7 @@ namespace DataProcessing.Controllers
                 else
                 {
                     //LOGGER
-                    Database.DbReplaceOldPassword(hashPasswordBase64, saltBase64, user.UserId);
+                    Database.DbReplaceOldPassword(newPassword, user.UserId);
                     return Ok();
                 }
             }

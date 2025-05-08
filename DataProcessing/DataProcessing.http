@@ -1,6 +1,4 @@
-@DataProcessing_HostAddress = http://localhost:5063
+@DataProcessing_HostAddress = https://localhost:5254
 
-GET {{DataProcessing_HostAddress}}/weatherforecast/
-Accept: application/json
 
 ###

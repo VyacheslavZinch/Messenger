@@ -1,4 +1,5 @@
 using APIInterfaces;
+using DotNetEnv;
 using System.Text.Json.Serialization;
 
 namespace MailService
@@ -8,6 +9,8 @@ namespace MailService
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateSlimBuilder(args);
+
+            builder.WebHost.UseUrls("http://localhost:5252");
 
             builder.Services.ConfigureHttpJsonOptions(options =>
             {

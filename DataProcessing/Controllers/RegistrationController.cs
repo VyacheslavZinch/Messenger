@@ -3,6 +3,7 @@ using DataProcessing.Actions;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 
 namespace DataProcessing.Controllers
 {
@@ -11,16 +12,17 @@ namespace DataProcessing.Controllers
     public class RegistrationController : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> UserRegistrationAccount([FromBody] Registration data)
+        public async Task<IActionResult> UserRegistrationAccount([FromBody] Registration requestData)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            Console.WriteLine(requestData);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 var mailServiceResponse = await Actions.ConfirmRegistration.Confirm(
                     new IncomingRequestRegistration()
                     {
-                        Name = data.Username,
-                        Email = data.UserEmail,
+                        Name = requestData.Username,
+                        Email = requestData.UserEmail,
                     });
 
                 if (mailServiceResponse.StatusCode != HttpStatusCode.OK)
@@ -47,24 +49,29 @@ namespace DataProcessing.Controllers
                 {
                     try
                     {
-                        Database.InsertNewUser(
-                            new UserInfo()
-                            {
-                                UserId = Guid.NewGuid(),
-                                Username = data.Username,
-                                UserNickname = data.UserNickname,
-                                UserEmail = data.UserEmail,
-                                UserPhoneNumber = data.UserPhoneNumber,
-                                UserRegistrationDate = DateOnly.FromDateTime(DateTime.Now)
-                            },
-                            data.Password);
+                        var newUser = new UserInfo()
+                        {
+                            UserId = Guid.NewGuid(),
+                            Username = requestData.Username,
+                            UserNickname = requestData.UserNickname,
+                            UserEmail = requestData.UserEmail,
+                            UserPhoneNumber = requestData.UserPhoneNumber,
+                            UserRegistrationDate = DateTime.Now.Date
+                        };
+                        Database.InsertNewUser(newUser, requestData.Password);
 
                         //LOGGER
-                        return Ok();
+                        return Ok(
+                            new AuthenticationResponse()
+                            {
+                                UserId = newUser.UserId.ToString(),
+                                UserNickName = newUser.UserNickname
+                            });
                     }
                     catch (Exception ex)
                     {
                         //LOGGER
+                        Console.WriteLine(ex);
                         return BadRequest();
                     }
                 }

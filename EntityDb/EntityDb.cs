@@ -16,10 +16,12 @@ namespace MessengerDb
         {
             Database.EnsureCreated();
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=172.24.8.14;Database=Messenger;User Id=vaclav;Password=Password12345;TrustServerCertificate=true");
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // UserInfo
@@ -27,10 +29,12 @@ namespace MessengerDb
             {
                 entity.ToTable("UserInfo");
                 entity.HasKey(e => e.UserId);
+                entity.Property(e => e.UserId).HasColumnType("uniqueidentifier");
                 entity.Property(e => e.Username).HasMaxLength(30).IsRequired();
-                entity.Property(e => e.UserNickname).HasMaxLength(10).IsRequired();
+                entity.Property(e => e.UserNickname).HasMaxLength(20).IsRequired();
                 entity.HasIndex(e => e.UserNickname).IsUnique();
                 entity.Property(e => e.UserEmail).HasMaxLength(30).IsRequired();
+                entity.Property(e => e.UserEmail).IsUnique();
                 entity.Property(e => e.UserPhoneNumber).HasMaxLength(12);
                 entity.Property(e => e.UserRegistrationDate).IsRequired();
             });
@@ -40,6 +44,8 @@ namespace MessengerDb
             {
                 entity.ToTable("UserContacts");
                 entity.HasKey(e => new { e.UserId, e.ContactId });
+                entity.Property(e => e.UserId).HasColumnType("uniqueidentifier");
+                entity.Property(e => e.ContactId).HasColumnType("uniqueidentifier");
 
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Contacts)
@@ -57,11 +63,21 @@ namespace MessengerDb
             {
                 entity.ToTable("UserChats");
                 entity.HasKey(e => e.ChatId);
+                entity.Property(e => e.ChatId).ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId1).HasColumnType("uniqueidentifier");
+                entity.Property(e => e.UserId2).HasColumnType("uniqueidentifier");
+                entity.Property(e => e.ChatName).HasMaxLength(50);
+                entity.Property(e => e.CreatedDate).IsRequired();
 
-                entity.HasOne(e => e.UserInfo)
+                entity.HasOne(e => e.User1)
                     .WithMany(e => e.Chats)
-                    .HasForeignKey(e => e.UserId)
+                    .HasForeignKey(e => e.UserId1)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User2)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId2)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // UserChatMessages
@@ -69,6 +85,9 @@ namespace MessengerDb
             {
                 entity.ToTable("UserChatMessages");
                 entity.HasKey(e => e.MessageId);
+                entity.Property(e => e.MessageId).ValueGeneratedOnAdd();
+                entity.Property(e => e.ChatId).HasColumnType("int");
+                entity.Property(e => e.UserId).HasColumnType("uniqueidentifier");
                 entity.Property(e => e.ChatMessage).HasMaxLength(500).IsRequired();
                 entity.Property(e => e.SendDate).IsRequired();
 
@@ -76,6 +95,11 @@ namespace MessengerDb
                     .WithMany(e => e.Messages)
                     .HasForeignKey(e => e.ChatId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // UserPassword
@@ -83,6 +107,7 @@ namespace MessengerDb
             {
                 entity.ToTable("UserPassword");
                 entity.HasKey(e => e.UserId);
+                entity.Property(e => e.UserId).HasColumnType("uniqueidentifier");
                 entity.Property(e => e.Password).HasMaxLength(100).IsRequired();
 
                 entity.HasOne(e => e.User)
@@ -96,6 +121,7 @@ namespace MessengerDb
             {
                 entity.ToTable("UserPasswordSalt");
                 entity.HasKey(e => e.UserId);
+                entity.Property(e => e.UserId).HasColumnType("uniqueidentifier");
                 entity.Property(e => e.Salt).HasMaxLength(100).IsRequired();
 
                 entity.HasOne(e => e.User)
@@ -104,7 +130,5 @@ namespace MessengerDb
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
-
-
     }
 }

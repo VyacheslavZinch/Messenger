@@ -16,6 +16,7 @@ namespace MailService
 
     public class Mail<T> where T: class
     {
+
         public RestClient Client { get; set; }
         public RestRequest Request { get; set; }
         public RestResponse Response { get; set; }

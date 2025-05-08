@@ -1,18 +1,21 @@
-﻿using Entities;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using RandomDataGenerator.FieldOptions;
+﻿using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
+using System;
 using System.Security.Cryptography;
 
 namespace DataProcessing.Actions
 {
     public static class Password
     {
+        /*
+         * генерация нового пароля для пользователя
+         * используется в контроллере восстановления доступа к аккаунту
+         */
         public static string NewPasswordGenerator()
         {
             var randomizer = RandomizerFactory.GetRandomizer(new FieldOptionsTextRegex
             {
-                Pattern = @"^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$"
+                Pattern = @"^[A-Za-z0-9=\!\@#\%\^\&\*\-\?\[\]\|]{9,}$"
             });
             return randomizer.Generate();
         }
@@ -26,8 +29,7 @@ namespace DataProcessing.Actions
             }
             return salt;
         }
-
-        public static string SaltBase64(byte[] salt) => Convert.ToBase64String(salt);
+        //Хеширование пароля
         public static byte[] HashPassword(string password, byte[] salt, int iterations = 100_000, int hashByteSize = 32)
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256))
@@ -36,23 +38,37 @@ namespace DataProcessing.Actions
             }
         }
 
+        //Преобразование массива байт соли в строку для хранения в БД
+        public static string SaltBase64(byte[] salt) => Convert.ToBase64String(salt);
+
+        //Хешируем пароль, преобразовываем в строку для хранения в БД
         public static string HashPasswordBase64(string password, byte[] salt)
         {
             byte[] hash = HashPassword(password, salt);
             return Convert.ToBase64String(hash);
         }
 
+        //Сравниваем хеши паролей (полученного от пользователя и пароля из БД)
         public static bool VerifyPassword(string inputPassword, string storedSaltBase64, string storedHashBase64)
         {
-            byte[] salt = Convert.FromBase64String(storedSaltBase64);
-            byte[] hash = HashPassword(inputPassword, salt);
-            string inputHashBase64 = Convert.ToBase64String(hash);
+            try
+            {
+                byte[] salt = Convert.FromBase64String(storedSaltBase64);
 
-            return inputHashBase64 == storedHashBase64;
+                byte[] hash = HashPassword(inputPassword, salt, 100_000);
+
+                string inputHashBase64 = Convert.ToBase64String(hash);
+#if DEBUG
+                Console.WriteLine($"Stored Hash: {storedHashBase64}");
+                Console.WriteLine($"Computed Hash: {inputHashBase64}");
+#endif
+
+                return inputHashBase64 == storedHashBase64;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
-
-
-
-
     }
 }
