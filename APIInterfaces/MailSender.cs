@@ -37,6 +37,7 @@ namespace APIInterfaces
         public string Email { get; set; }
 
     }
+
     public record IncomingRequestRestoreAccess
     {
         [JsonPropertyName("name")]
@@ -45,7 +46,7 @@ namespace APIInterfaces
         [JsonPropertyName("email")]
         public string Email { get; set; }
 
-        [JsonPropertyName("newpassword")]
+        [JsonPropertyName("password")]
         public string NewPassword { get; set; }
 
     }

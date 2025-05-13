@@ -1,0 +1,474 @@
+﻿<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>
+@model WebClient.Models.MessagesViewModel
+@{
+    ViewData["Title"] = "Сообщения";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сообщения</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('https://images.wallpaperscraft.ru/image/single/more_gorizont_temnyj_128627_1920x1080.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-right: 1rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .search-container {
+            margin-bottom: 1rem;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .search-results {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .search-results .user {
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-results .user:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-results .add-btn {
+            background: silver;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .chat-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 0.8rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-container {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-header {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column; /* Сообщения выстраиваются в столбец */
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            max-width: 70%;
+            width: fit-content; /* Ширина подстраивается под содержимое */
+        }
+
+        .message.sent {
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .message-input {
+            display: flex;
+            padding: 0.5rem;
+        }
+
+        .message-input input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .message-input button {
+            padding: 0.8rem;
+            background: silver;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: silver;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+        }
+
+        .chat-list::-webkit-scrollbar,
+        .messages::-webkit-scrollbar,
+        .search-results::-webkit-scrollbar {
+            width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Поиск по email или никнейму" />
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <div class="chat-list" id="chatList"></div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-header" id="chatHeader">Выберите чат</div>
+            <div class="messages" id="messages"></div>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Введите сообщение..." />
+                <button onclick="sendMessage()">Отправить</button>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Выход</button>
+    </div>
+    <audio id="messageSound" src="@Url.Content("~/sounds/message.mp3")"></audio>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/lib/signalr/signalr.min.js" onerror="console.error('Failed to load SignalR from local path. Check if the file exists in wwwroot/lib/signalr/');"></script>
+    <script>if (typeof signalR === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"><\/script>'); }</script>
+
+    <script>
+        console.log("JavaScript loaded");
+
+        if (typeof signalR === 'undefined') {
+            console.error("signalR is still not defined after attempting to load. Please ensure the SignalR script is correctly loaded.");
+        } else {
+            console.log("signalR loaded successfully");
+        }
+
+        const API_BASE_URL = "https://localhost:5254";
+        const SIGNALR_URL = "https://localhost:5254/chathub";
+
+        // Добавляем access_token и userId в URL для SignalR
+        const accessToken = '@Model.AccessToken';
+        const userId = '@Model.UserId';
+        let signalRUrlWithToken = SIGNALR_URL;
+        if (accessToken && userId) {
+            signalRUrlWithToken += `?access_token=${accessToken}&userId=${userId}`;
+        } else {
+            console.error("Access token or userId is missing:", { accessToken, userId });
+        }
+        console.log("SignalR URL:", signalRUrlWithToken);
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(signalRUrlWithToken, { 
+                withCredentials: true
+            })
+            .build();
+
+        let currentChatId = null;
+        let currentChatUserName = null;
+
+        connection.start().then(() => {
+            console.log("SignalR Connected");
+            loadChats();
+        }).catch(err => console.error("SignalR Connection Error:", err));
+
+        connection.on("ReceiveMessage", (chatId, userId, message, sendDate, senderNickname) => {
+            console.log("Received message:", { chatId, userId, message, sendDate, senderNickname });
+            if (chatId === currentChatId) {
+                const isSent = userId === '@Model.UserId';
+                console.log("isSent:", isSent, "userId:", userId, "@Model.UserId:", '@Model.UserId'); // Отладка
+                appendMessage(message, isSent, sendDate, senderNickname);
+                if (!isSent) {
+                    let audio = document.getElementById("messageSound");
+                    audio.muted = false;
+                    audio.play().catch(err => {
+                        console.error("Error playing sound:", err);
+                    });
+                }
+            }
+            loadChats();
+        });
+
+        connection.on("ReceiveError", (error) => {
+            console.log("SignalR Error:", error);
+            alert(error);
+        });
+
+        function loadChats() {
+            console.log("Loading chats...");
+            $.ajax({
+                url: `${API_BASE_URL}/api/chats/get-chats`,
+                type: "GET",
+                headers: {
+                       "Authorization": `Bearer ${accessToken}` // добавляем токен
+                },
+                success: (chats) => {
+                    console.log("Chats loaded:", chats);
+                    const chatList = $("#chatList");
+                    chatList.empty();
+                    if (chats && chats.length > 0) {
+                        chats.forEach(chat => {
+                            chatList.append(`
+                                <div class="chat-item" onclick="selectChat(${chat.chatId}, '${chat.userName}')">
+                                    ${chat.userName} ${chat.lastMessage ? `- ${chat.lastMessage}` : ""}
+                                </div>
+                            `);
+                        });
+                    } else {
+                        chatList.append('<div class="chat-item">Чатов пока нет</div>');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error loading chats:", status, error, xhr.responseText);
+                    $("#chatList").html('<div class="chat-item">Ошибка загрузки чатов</div>');
+                }
+            });
+        }
+
+        function selectChat(chatId, userName) {
+            console.log("Selecting chat:", chatId, userName);
+            currentChatId = chatId;
+            currentChatUserName = userName;
+
+            localStorage.setItem("lastChatId", chatId);
+            localStorage.setItem("lastChatUserName", userName);
+
+            $("#chatHeader").text(userName || "Чат");
+            $("#messages").empty();
+            $.ajax({
+                url: `${API_BASE_URL}/api/messages/${chatId}`,
+                type: "GET",
+                headers: {
+                       "Authorization": `Bearer ${accessToken}` // добавляем токен
+                },
+                success: (messages) => {
+                    console.log("Messages loaded:", messages);
+                    if (messages && messages.length > 0) {
+                        messages.forEach(msg => {
+                            appendMessage(msg.chatMessage, msg.userId === '@Model.UserId', msg.sendDate, msg.senderNickname);
+                        });
+                    } else {
+                        $("#messages").html('<div class="message">Сообщений пока нет</div>');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error loading messages:", status, error, xhr.responseText);
+                    $("#messages").html('<div class="message">Ошибка загрузки сообщений</div>');
+                }
+            });
+        }
+        $(document).ready(function () {
+            const lastChatId = localStorage.getItem("lastChatId");
+            const lastChatUserName = localStorage.getItem("lastChatUserName");
+            if (lastChatId && lastChatUserName) {
+                selectChat(parseInt(lastChatId), lastChatUserName);
+            }
+        });
+
+        function appendMessage(content, isSent, sendDate, senderNickname) {
+            const date = new Date(sendDate).toLocaleTimeString();
+            $("#messages").append(`
+                <div class="message ${isSent ? 'sent' : 'received'}">
+                    <p><strong>${senderNickname}</strong>: ${content}</p>
+                    <small>${date}</small>
+                </div>
+            `);
+            $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        }
+
+        function sendMessage() {
+            const message = $("#messageInput").val();
+            if (message && currentChatId) {
+                console.log("Sending message:", message, "to chat:", currentChatId);
+                connection.invoke("SendMessage", currentChatId, message).catch(err => console.error("Error sending message:", err));
+                $("#messageInput").val("");
+            } else if (!currentChatId) {
+                alert("Выберите чат для отправки сообщения.");
+            }
+        }
+
+        $("#searchInput").on("input", function () {
+            const query = $(this).val().trim(); // убираем пробелы
+            console.log("Searching users with query:", query);
+            if (query.length > 2) {
+                $.ajax({
+                    url: `${API_BASE_URL}/api/users/search?query=${query}`, // правильный маршрут
+                    type: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}` // добавляем токен
+                    },
+                    success: (users) => {
+                        console.log("Search results:", users);
+                        const results = $("#searchResults");
+                        results.empty();
+                        if (users && users.length > 0) {
+                            users.forEach(user => {
+                                results.append(`
+                                    <div class="user">
+                                        <span>${user.userNickname} (${user.userEmail})</span>
+                                        <button class="add-btn" onclick="addContact('${user.userId}')">Добавить</button>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            results.append('<div class="user">Пользователи не найдены</div>');
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Error searching users:", status, error, xhr.responseText);
+                        $("#searchResults").html('<div class="user">Ошибка поиска</div>');
+                    }
+                });
+            } else {
+                $("#searchResults").empty();
+            }
+        });
+
+        function addContact(userId) {
+            console.log("Adding contact with userId:", userId);
+            $.ajax({
+                url: `${API_BASE_URL}/api/contacts/add`,
+                type: "POST",
+                headers: {
+                        "Authorization": `Bearer ${accessToken}` // добавляем токен
+                    },
+                data: JSON.stringify({ contactId: userId }),
+                contentType: "application/json",
+                success: (newChatId) => {
+                    console.log("Contact added, new chat ID:", newChatId);
+                    alert("Контакт добавлен!");
+                    $("#searchResults").empty();
+                    $("#searchInput").val("");
+                    loadChats();
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error adding contact:", status, error, xhr.responseText);
+                    alert("Ошибка при добавлении контакта: " + xhr.responseText);
+                }
+            });
+        }
+
+        function logout() {
+            console.log("Logging out...");
+            window.location.href = "/logout";
+        }
+
+        $("#messageInput").on("keypress", function (e) {
+            if (e.which === 13) {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert sheet to JSON to filter blank rows
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            // Filter out blank rows (rows where all cells are empty, null, or undefined)
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            // Fallback
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            // Convert filtered JSON back to CSV
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+</script>@{
+ViewData["Title"] = "Регистрация";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="~/css/register.css" />
+</head>
+<body>
+    <div class="form-container">
+        <h2>Создать аккаунт</h2>
+        <form asp-controller="Registration" asp-action="Register" onsubmit="return validateForm()">
+            @Html.AntiForgeryToken()
+            <label for="name">Имя</label>
+            <input type="text" id="name" name="name" required />
+
+            <label for="nickname">Никнейм</label>
+            <input type="text" id="nickname" name="nickname" required />
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required />
+
+            <label for="confirm">Подтвердите пароль</label>
+            <input type="password" id="confirm" name="confirm" required />
+
+            <button type="submit">Зарегистрироваться</button>
+
+            @if (ViewBag.Error != null)
+            {
+                <p class="error">@ViewBag.Error</p>
+            }
+
+            <div class="links">
+                <p>Уже есть аккаунт? <a href="/Login">Войти</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            const password = document.getElementById("password").value;
+            const confirm = document.getElementById("confirm").value;
+            if (password !== confirm) {
+                alert("Пароли не совпадают!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

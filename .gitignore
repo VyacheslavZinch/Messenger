@@ -16,3 +16,13 @@
 /EntityDb/bin/Debug/net8.0
 /EntityDb/obj
 /CreateDatabaseQuery.sql
+/APIInterfaces/bin/Release/net8.0
+/DataProcessing/bin/Debug/net8.0
+/DataProcessing/obj/Debug
+/DataProcessing/obj
+/DataProcessing/Properties/PublishProfiles
+/DataProcessing/.env
+/EntityDb/bin/Debug/net9.0
+/MailService/Properties/PublishProfiles
+/WebClient/bin/Debug/net9.0
+/WebClient/obj
